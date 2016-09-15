@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+android:shape="rectangle">
+<!-- set mau nen -->
+<solid android:color="#FFFFFF"></solid>
+
+<!--thuoc tinh duong vien -->
+<stroke
+    android:width="2dp"
+    android:color="#555555">
+</stroke>
+
+<!-- do cong cua vien -->
+<corners
+    android:radius="20dp">
+</corners>
+</shape>

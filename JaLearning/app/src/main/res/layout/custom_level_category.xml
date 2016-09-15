@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<org.eazegraph.lib.charts.PieChart-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/piechart"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:padding="8dp"-->
+        <!--app:egLegendTextSize="18sp"-->
+        <!--app:egUsePieRotation="true"-->
+        <!--app:egValueTextSize="36sp"/>-->
+
+    <ImageView
+        android:id="@+id/imChar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/circle"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:id="@+id/llword"
+        android:layout_toRightOf="@+id/imChar"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N1"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#000"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/tvNumberOfN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10/1000 word"
+            android:textColor="#9f9f9f"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

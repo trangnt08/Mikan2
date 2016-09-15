@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView
+        android:id="@+id/CONTACT_circle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:id="@+id/llword"
+        android:layout_toRightOf="@+id/CONTACT_circle"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jonh Doe"
+            android:textColor="#000"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/tvMean"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+01 123456789"
+            android:textColor="#9f9f9f"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/checkbox"
+        android:layout_marginRight="20dp"
+        android:text="Good!"
+        android:textSize="20sp"
+        android:textColor="#f95cef22"/>
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:layout_alignParentRight="true"
+        android:checked="false"
+        android:layout_centerVertical="true" />
+</RelativeLayout>

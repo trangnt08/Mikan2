@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".CheckList">
+    <!--<item android:id="@+id/meNote" android:title="単語 List"-->
+        <!--app:showAsAction="ifRoom"/>-->
+    <item android:id="@+id/sxchuathuoc" android:title="Sắp xếp chưa thuộc"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/sxdathuoc" android:title="Sắp xếp đã thuộc"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/tickall" android:title="Chọn tất cả"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/untickall" android:title="Bor chọn tất cả"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

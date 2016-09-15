@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/luyentap" android:icon="@drawable/pencil"
+            android:title="Luyện tập" />
+        <item android:id="@+id/test" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Kiểm tra" />
+        <item android:id="@+id/category" android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Category" />
+        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Tools" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
+                android:title="Share" />
+            <item android:id="@+id/caidat" android:icon="@android:drawable/ic_menu_send"
+                android:title="Cài đặt" />
+        </menu>
+    </item>
+
+</menu>
