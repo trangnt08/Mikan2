@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.thuytrangnguyen.jalearning.R;
-import com.example.thuytrangnguyen.jalearning.gui.Answer;
 import com.msquare.widget.mprogressbar.MProgressBar;
 
 /**
@@ -117,7 +116,7 @@ public class Tab1 extends Fragment {
         }).start();
     }
     private void showIntent(Context context){
-        Intent intent = new Intent(context,Answer.class);
+        Intent intent = new Intent(context,Learning.class);
         context.startActivity(intent);
     }
     public void tab(int i){

@@ -10,9 +10,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.thuytrangnguyen.jalearning.R;
+import com.example.thuytrangnguyen.jalearning.helper.DatabaseHelper;
 import com.example.thuytrangnguyen.jalearning.object.Word;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Thuy Trang Nguyen on 8/10/2016.
@@ -20,23 +22,32 @@ import java.util.ArrayList;
 public class CheckList extends AppCompatActivity{
 
     private ArrayList<Word> arrList;
+    private List<Word> wordList;
     ItemCheckList adapter;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list_note);
 
+        db = new DatabaseHelper(this);
         connectView();
     }
     public void connectView(){
         ListView lv = (ListView)findViewById(R.id.list_note);
         arrList = new ArrayList<Word>();
-        Word word = new Word();
-        word.setWord("Hello");
-        word.setMean("Xin chao");
-        word.setStatus(0);
-        arrList.add(word);
+        wordList = db.getListWord("n2");
+        int i=0;
+        for(i=0;i<wordList.size();i++){
+            Word word = wordList.get(i);
+            arrList.add(word);
+        }
+//        Word word = new Word();
+//        word.setWord("Hello");
+//        word.setMean("Xin chao");
+//        word.setStatus(0);
+//        arrList.add(word);
         adapter = new ItemCheckList(this,R.layout.item_word_list,arrList);
         Log.d("adapter", "" + adapter.getCount());
         lv.setAdapter(adapter);
