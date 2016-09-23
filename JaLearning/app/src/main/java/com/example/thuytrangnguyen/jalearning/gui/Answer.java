@@ -1,6 +1,8 @@
 package com.example.thuytrangnguyen.jalearning.gui;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -9,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,10 +29,9 @@ import java.util.Locale;
 import java.util.Random;
 
 /**
- * Created by Thuy Trang Nguyen on 8/7/2016.
+ * Created by Thuy Trang Nguyen on 9/15/2016.
  */
-public class Answer extends AppCompatActivity {
-
+public class Answer extends AppCompatActivity implements View.OnClickListener {
     TextView tvQues, tvNumberQues, tvDemlui;
     TextToSpeech t1;
     Context context;
@@ -39,25 +41,28 @@ public class Answer extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     TextView tvA, tvB, tvC, tvD;
     TextView tickA, tickB, tickC, tickD;
+    ProgressBar progressBar;
     private int isSoundon = 1 ;
     private String chooseanswer="";
-    private int numberquestion=1;
+    private String correct = "";
+    private int numberquestion=0;
     private static final int MY_DATA_CHECK_CODE = 1234;
     String toSpeak = "";
+    String n="";
     int r;
     int next=0;
-    int i;
+    int d;
+    int t=0;
     private final Handler timeHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        getSupportActionBar().hide();
-
         setContentView(R.layout.answer);
-        dbHelper = new DatabaseHelper(this);
+
+        context = this;
+        dbHelper = new DatabaseHelper(context);
         File database = getApplicationContext().getDatabasePath(dbHelper.DB_NAME);
         if (false == database.exists()) {
             dbHelper.getReadableDatabase();
@@ -70,89 +75,12 @@ public class Answer extends AppCompatActivity {
         }
         //wordList = dbHelper.getListWord("n2");
         questionsList = dbHelper.getQuestions("n2");
+        wordList = dbHelper.getListWord("n2");
         Log.d("Size", "" + questionsList.size());
 
         connectView();
-
-        //for(i=0;i<3;i++) {
-            i=0;
-            Random ran = new Random();
-            r = ran.nextInt(4);
-            Question q = questionsList.get(i);
-            showAnswers(q, r);
-        //}
-
-//        Nếu có 3 dòng này thì tiếng sẽ phát trước khi activity này đc hiện ra.
-//        Intent checkIntent = new Intent();
-//        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-//        startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-
-        toSpeak = tvQues.getText().toString();
-        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                t1.setLanguage(Locale.JAPANESE);
-                // dòng t1. speak trong hàm onInit để phát âm luôn ko phải đợi click
-                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-            }
-        });
-
-
-        ibLoa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                soundEvent();
-            }
-        });
-        tvA.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                aEvent(r);
-                ca.start();
-                next = 1;
-                toNextQuestion();
-            }
-        });
-        tvB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bEvent(r);
-                ca.start();
-                next = 2;
-                toNextQuestion();
-            }
-        });
-        tvC.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cEvent(r);
-                ca.start();
-                next = 3;
-                toNextQuestion();
-            }
-        });
-        tvD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dEvent(r);
-                ca.start();
-                next = 4;
-                toNextQuestion();
-            }
-        });
-        Log.d("", "nexxxxxxxxxxtttttttttttt"+next);
-        if (next == 1 || next==2 || next==3 || next==4){
-            toNextQuestion();
-            Log.d("","nexxxxxxxxxxtttttttttttt");
-        }
-    }
-
-    public void onPause() {
-        if (t1 != null) {
-            t1.stop();
-//            t1.shutdown();
-        }
-        super.onPause();
+        toNextQuestion();
+        learn();
     }
 
 
@@ -160,6 +88,7 @@ public class Answer extends AppCompatActivity {
         tvQues = (TextView) findViewById(R.id.tvQues);
         tvNumberQues = (TextView) findViewById(R.id.tvNumberQues);
         tvDemlui = (TextView) findViewById(R.id.tvDemlui);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ibLoa = (ImageButton) findViewById(R.id.ibLoa);
         tvA = (TextView) findViewById(R.id.tvA);
         tvB = (TextView) findViewById(R.id.tvB);
@@ -169,225 +98,6 @@ public class Answer extends AppCompatActivity {
         tickB = (TextView) findViewById(R.id.textView_tickB);
         tickC = (TextView) findViewById(R.id.textView_tickC);
         tickD = (TextView) findViewById(R.id.textView_tickD);
-    }
-
-    public void showAnswers(Question question, int ran) {
-        tvQues.setText(question.getWord().toString());
-        switch (ran) {
-            case 0:
-                tvA.setText(question.getMean().toString());
-                tvB.setText(question.getAns1().toString());
-                tvC.setText(question.getAns2().toString());
-                tvD.setText(question.getAns3().toString());
-                break;
-            case 1:
-                tvB.setText(question.getMean().toString());
-                tvA.setText(question.getAns1().toString());
-                tvC.setText(question.getAns2().toString());
-                tvD.setText(question.getAns3().toString());
-                break;
-            case 2:
-                tvC.setText(question.getMean().toString());
-                tvB.setText(question.getAns1().toString());
-                tvA.setText(question.getAns2().toString());
-                tvD.setText(question.getAns3().toString());
-                break;
-            default:
-                tvD.setText(question.getMean().toString());
-                tvB.setText(question.getAns1().toString());
-                tvC.setText(question.getAns2().toString());
-                tvA.setText(question.getAns3().toString());
-                break;
-        }
-    }
-    public void soundEvent(){
-        if(isSoundon==1){
-            isSoundon=0;
-            ibLoa.setImageResource(R.drawable.ic_volume_off);
-            onPause();
-        } else{
-            isSoundon=1;
-            ibLoa.setImageResource(R.drawable.ic_volume_down_black_24dp);
-            sound();
-        }
-    }
-
-    public void sound(){
-        String toSpeak = tvQues.getText().toString();
-        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    public void setStatusOnClickABCD(boolean status){
-        //status=false: remove onClick from button
-        //status=true:
-        tvA.setClickable(status);
-        tvB.setClickable(status);
-        tvC.setClickable(status);
-        tvD.setClickable(status);
-    }
-
-    public void aEvent(int ran){
-            //chooseanswer = "A";
-        if(ran==0) {
-            tickA.setBackgroundResource(R.drawable.check);
-            tvA.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_true));
-        }else {
-            tickA.setBackgroundResource(R.drawable.window_close);
-            tvA.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_false));
-        }
-    }
-
-    public void bEvent(int ran) {
-        if (ran == 1) {
-            tickB.setBackgroundResource(R.drawable.check);
-            tvB.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_true));
-        } else {
-            tickB.setBackgroundResource(R.drawable.window_close);
-            tvB.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_false));
-        }
-    }
-    public void cEvent(int ran){
-        if (ran == 2) {
-            tickC.setBackgroundResource(R.drawable.check);
-            tvC.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_true));
-        } else {
-            tickC.setBackgroundResource(R.drawable.window_close);
-            tvC.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_false));
-        }
-    }
-
-    public void dEvent(int ran){
-        if (ran == 3) {
-            tickD.setBackgroundResource(R.drawable.check);
-            tvD.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_true));
-        } else {
-            tickD.setBackgroundResource(R.drawable.window_close);
-            tvD.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview_false));
-        }
-    }
-
-    CountDownTimer ca = new CountDownTimer(3000,100) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-
-        }
-
-        @Override
-        public void onFinish() {
-
-        }
-    };
-    //setup dem lui 10s ->(11000,1000)
-    private final CountDownTimer countDownTimer = new CountDownTimer(11000, 1000){
-        public void onTick(long millisecond){
-            tvDemlui.setText(Integer.toString((int) (millisecond / 1000)));
-            tvA.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-            tickB.setBackgroundResource(0);
-            tvB.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-            tickC.setBackgroundResource(0);
-            tvC.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-            tickD.setBackgroundResource(0);
-            tvD.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-        }
-        public void onFinish(){
-            tvDemlui.setText(Integer.toString(0));
-            if(numberquestion<10){
-                toNextQuestion();
-            }else{
-                stopPlaying();
-            }
-        }
-    };
-    public void updateScreen(){
-        //tick.setBackgroundResource(0);
-        //backgroundanswer.setBackgroundResource(R.drawable.border_textview);
-        if(i<questionsList.size()-1) {
-            i++;
-            tvNumberQues.setText(numberquestion + "/10");
-            Random ran = new Random();
-            r = ran.nextInt(4);
-            Question q = questionsList.get(i);
-            showAnswers(q, r);
-//            tickA.setBackgroundColor(Color.parseColor("#ffffff"));
-//            tvA.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-//            tickB.setBackgroundColor(Color.parseColor("#ffffff"));
-//            tvB.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-//            tickC.setBackgroundColor(Color.parseColor("#ffffff"));
-//            tvC.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-//            tickD.setBackgroundColor(Color.parseColor("#ffffff"));
-//            tvD.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_textview));
-        }
-        //clock.setText("10");
-    }
-
-    public void toNextQuestion() {
-        setStatusOnClickABCD(true);
-        if (numberquestion < 10) {
-            numberquestion++;
-            updateScreen();
-        } else {
-            stopPlaying();
-        }
-        tickA.setBackgroundResource(0);
-
-
-        countDownTimer.start();
-    }
-    public void stopPlaying(){
-        //TODO
-        countDownTimer.cancel();
-//        timeHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Intent intentStopPlay=new Intent(Answer.this,StopLearnActivity.class);
-//                startActivity(intentStopPlay);
-//            }
-//        },1000);
-
-    }
-
-    public void getAnswer(final String chooseanswer, TextView backgroundanswer, TextView tick){
-//        countDownTimer.cancel();
-//
-//        if(trueAnswer(chooseanswer)) {
-//            //change layout button
-//            setCurrentScreen(backgroundanswer,tick,true);
-//
-//            if(numberquestion<10) {
-//                //time wait before next question
-//                timeHandler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-                        switch (chooseanswer) {
-                            case "A":
-                                tickA.setBackgroundResource(0);
-                                tvA.setBackgroundResource(R.drawable.border_textview);
-                                break;
-                            case "B":
-                                tickB.setBackgroundResource(0);
-                                tvB.setBackgroundResource(R.drawable.border_textview);
-                                break;
-                            case "C":
-                                tickC.setBackgroundResource(0);
-                                tvC.setBackgroundResource(R.drawable.border_textview);
-                                break;
-                            case "D":
-                                tickD.setBackgroundResource(0);
-                                tvD.setBackgroundResource(R.drawable.border_textview);
-                                break;
-                        }
-//                        toNextQuestion();
-//                    }
-//                }, 1000);
-//            }else{
-//                stopPlaying();
-//            }
-
-//        }else{
-//            setCurrentScreen(backgroundanswer,tick,false);
-//            countDownTimer.cancel();
-//            toNextQuestion();
-//        }
     }
     private boolean copyDataBase(Context context) {
 
@@ -407,7 +117,6 @@ public class Answer extends AppCompatActivity {
             while ((length = myInput.read(buffer)) > 0) {
                 myOutput.write(buffer, 0, length);
             }
-
             //Close the streams
             myOutput.flush();
             myOutput.close();
@@ -416,7 +125,316 @@ public class Answer extends AppCompatActivity {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public void learn(){
+        timeProcess();
+        getOnClick();
+    }
+
+    public void timeProcess(){
+        countDownTimer.start();
+
+
 
     }
 
+    public void getOnClick(){
+        tvA.setOnClickListener(this);
+        tvB.setOnClickListener(this);
+        tvC.setOnClickListener(this);
+        tvD.setOnClickListener(this);
+        ibLoa.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.tvA:
+                if(next<questionsList.size()) {
+                    aEvent();
+                }
+                break;
+            case R.id.tvB:
+                if(next<questionsList.size()) {
+                    bEvent();
+                }
+                break;
+            case R.id.tvC:
+                if(next<questionsList.size()) {
+                    cEvent();
+                }
+                break;
+            case R.id.tvD:
+                if(next<questionsList.size()) {
+                    dEvent();
+                }
+                break;
+            case R.id.ibLoa:
+                soundEvent();
+                break;
+        }
+    }
+
+    public void aEvent(){
+        setStatusOnClickABCD(false);
+        chooseanswer="A";
+        getAnswer(chooseanswer, tvA, tickA);
+    }
+
+    public void bEvent(){
+        setStatusOnClickABCD(false);
+        chooseanswer="B";
+        getAnswer(chooseanswer,tvB,tickB);
+    }
+
+    public void cEvent(){
+        setStatusOnClickABCD(false);
+        chooseanswer="C";
+        getAnswer(chooseanswer, tvC, tickC);
+    }
+
+    public void dEvent(){
+        setStatusOnClickABCD(false);
+        chooseanswer="D";
+        getAnswer(chooseanswer, tvD, tickD);
+    }
+
+    public void soundEvent(){
+        if(isSoundon==1){
+            isSoundon=0;
+            ibLoa.setImageResource(R.drawable.ic_volume_off);
+            onPause();
+        } else{
+            isSoundon=1;
+            ibLoa.setImageResource(R.drawable.ic_volume_down_black_24dp);
+            sound();
+        }
+    }
+    public void sound(){
+        String toSpeak = tvQues.getText().toString();
+        t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    public void setStatusOnClickABCD(boolean status){
+        //status=false: remove onClick from button
+        //status=true:
+        tvA.setClickable(status);
+        tvB.setClickable(status);
+        tvC.setClickable(status);
+        tvD.setClickable(status);
+    }
+
+    public void stopPlaying(){
+        //TODO
+        countDownTimer.cancel();
+        timeHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intentStopPlay = new Intent(Answer.this, StopLearnActivity.class);
+                startActivity(intentStopPlay);
+            }
+        }, 100);
+
+    }
+
+    //setup dem lui 5s ->(6000,1000)
+    private final CountDownTimer countDownTimer = new CountDownTimer(5900, 100){
+        public void onTick(long millisecond){
+            d = (int) ((millisecond/100));
+            progressBar.setProgress(d-5);
+            if(d%10==0)
+            tvDemlui.setText(Integer.toString(d/10-1));
+            t++;
+        }
+        public void onFinish(){
+            d=d-10;
+            progressBar.setProgress(d);
+            tvDemlui.setText(Integer.toString(0));
+            if(numberquestion<10){
+                toNextQuestion();
+            }else{
+                stopPlaying();
+            }
+        }
+    };
+    public void setCurrentScreen(TextView backgroundanswer,TextView tick,boolean isTrue){
+        //neu tra loi dung
+        if(isTrue){
+            tick.setBackgroundResource(R.drawable.iconticktrue);
+            backgroundanswer.setBackgroundResource(R.drawable.border_textview_true);
+        }else{
+            tick.setBackgroundResource(R.drawable.window_close);
+            backgroundanswer.setBackgroundResource(R.drawable.border_textview_false);
+        }
+    }
+
+    public void updateScreen(int n){
+        Random ran = new Random();
+        r = ran.nextInt(4);
+        if(n>= questionsList.size()){
+            return;
+        }
+        Question q = questionsList.get(n);
+
+        tvNumberQues.setText(numberquestion + "/10");
+        tvDemlui.setText("5");
+        showAnswers(q,r);
+    }
+
+    public void toNextQuestion(){
+        setStatusOnClickABCD(true);
+        t=0;
+        progressBar.setProgress(59);
+        progressBar.setMax(59);
+        if(numberquestion<10){
+            numberquestion++;
+            chooseanswer="";
+            updateScreen(next);
+            Log.d("size  = " + questionsList.size(), "i = " + next);
+            next++;
+        }else{
+            stopPlaying();
+        }
+
+        //update question
+
+        countDownTimer.start();
+    }
+
+    public boolean trueAnswer(String ans){
+        if(ans == correct) return true;
+//        if(question.getMean().trim()==tv.getText().toString().trim())
+//            return true;
+        else return false;
+    }
+
+    public void showAnswers(Question question, int ran) {
+        tvQues.setText(question.getWord().toString());
+        toSpeak = tvQues.getText().toString();
+
+        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                t1.setLanguage(Locale.JAPANESE);
+                // dòng t1. speak trong hàm onInit để phát âm luôn ko phải đợi click
+
+                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+        switch (ran) {
+            case 0:
+                tvA.setText(question.getMean().toString());
+                tvB.setText(question.getAns1().toString());
+                tvC.setText(question.getAns2().toString());
+                tvD.setText(question.getAns3().toString());
+                correct = "A";
+                break;
+            case 1:
+                tvB.setText(question.getMean().toString());
+                tvA.setText(question.getAns1().toString());
+                tvC.setText(question.getAns2().toString());
+                tvD.setText(question.getAns3().toString());
+                correct = "B";
+                break;
+            case 2:
+                tvC.setText(question.getMean().toString());
+                tvB.setText(question.getAns1().toString());
+                tvA.setText(question.getAns2().toString());
+                tvD.setText(question.getAns3().toString());
+                correct = "C";
+                break;
+            default:
+                tvD.setText(question.getMean().toString());
+                tvB.setText(question.getAns1().toString());
+                tvC.setText(question.getAns2().toString());
+                tvA.setText(question.getAns3().toString());
+                correct = "D";
+                break;
+        }
+    }
+    public void getAnswer( final String chooseanswer, TextView backgroundanswer, TextView tick){
+        countDownTimer.cancel();
+
+        if(trueAnswer(chooseanswer)) {
+            //change layout button
+            setCurrentScreen(backgroundanswer,tick,true);
+        }else{
+            setCurrentScreen(backgroundanswer,tick,false);
+            //countDownTimer.cancel();
+//            toNextQuestion();
+        }
+        if(numberquestion<10 && numberquestion<=questionsList.size()) {
+            //time wait before next question
+            timeHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (chooseanswer) {
+                        case "A":
+                            tickA.setBackgroundResource(0);
+                            tvA.setBackgroundResource(R.drawable.border_textview);
+                            break;
+                        case "B":
+                            tickB.setBackgroundResource(0);
+                            tvB.setBackgroundResource(R.drawable.border_textview);
+                            break;
+                        case "C":
+                            tickC.setBackgroundResource(0);
+                            tvC.setBackgroundResource(R.drawable.border_textview);
+                            break;
+                        case "D":
+                            tickD.setBackgroundResource(0);
+                            tvD.setBackgroundResource(R.drawable.border_textview);
+                            break;
+                    }
+//                    Log.d("ttttttt = ", "" + t);
+//
+//                    Log.d("nexttttttt ",""+next);
+//                    Question question = questionsList.get(next-1);
+//                    //Word word = new Word();
+//                    String sql1 = "SELECT * FROM " + DatabaseHelper.N2 + " WHERE " + DatabaseHelper.ID_WORD + "=" + next;
+//                    Log.d("sql1 ",""+sql1);
+//                    Word word = dbHelper.getWord(sql1);
+
+//                    word.setId(question.getId());
+//                    word.setWord(question.getWord());
+//                    word.setMean(question.getMean());
+//                    Log.d("bbbbbb",""+word.getWord());
+//                    if(t<=15) word.setStatus(1);
+//                    else if(t>15 && t<=30) word.setStatus(2);
+//                    else if(t>30 && t<=40) word.setStatus(3);
+//                    else word.setStatus(4);
+//
+////                    word.setId(word.getId());
+//                    word.setCheck(0);
+//                    n = "N2";
+//                    String notify = "";
+//                    String sql = "INSERT INTO " + n + " VALUES ("+ word.getId()+","+word.getStatus()+",0);";
+//                    //Log.d("next"+next,""+question.getWord());
+//                    //Log.d("aaaaaaaaaa",sql);
+//                    Log.d("status ",""+word.getStatus());
+//                    Log.d("check ",""+word.getCheck());
+                    //boolean a = dbHelper.updateWord(word,"N2");
+//                    if (dbHelper.updateWord(word,"N2")) notify = "add success!";
+//                    else  notify = "add fail";
+                    toNextQuestion();
+                }
+            }, 100);
+        }else{
+            stopPlaying();
+        }
+
+    }
+
+
+    private Dialog makeDialog(){
+        //khoi tao Dialog
+        Dialog dialog=new Dialog(Answer.this);
+        //set layout cho Dialog
+        //dialog.setContentView();
+        //set message for dialog
+        dialog.setTitle("   Ban co muon thoat khong");
+
+        return dialog;
+    }
 }

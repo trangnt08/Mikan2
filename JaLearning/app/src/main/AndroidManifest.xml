@@ -30,9 +30,7 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".gui.Answer"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:name=".gui.Answer">
         </activity>
         <activity
             android:name=".gui.Learning"

@@ -1,4 +1,4 @@
-package com.example.thuytrangnguyen.jalearning.gui;
+package com.example.thuytrangnguyen.jalearning.item;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

@@ -116,7 +116,7 @@ public class Tab1 extends Fragment {
         }).start();
     }
     private void showIntent(Context context){
-        Intent intent = new Intent(context,Learning.class);
+        Intent intent = new Intent(context,Answer.class);
         context.startActivity(intent);
     }
     public void tab(int i){

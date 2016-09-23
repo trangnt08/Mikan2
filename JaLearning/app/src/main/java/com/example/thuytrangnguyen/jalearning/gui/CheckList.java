@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.example.thuytrangnguyen.jalearning.R;
 import com.example.thuytrangnguyen.jalearning.helper.DatabaseHelper;
+import com.example.thuytrangnguyen.jalearning.item.ItemCheckList;
 import com.example.thuytrangnguyen.jalearning.object.Word;
 
 import java.util.ArrayList;
