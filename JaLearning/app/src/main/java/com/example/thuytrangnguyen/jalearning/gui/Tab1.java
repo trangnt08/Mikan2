@@ -27,6 +27,7 @@ public class Tab1 extends Fragment {
     TextView tvRank, tvRankonRank;
     int mProgressStatus=0;
     int mProgressStatus2=0;
+    int bt;
     private Handler mHandler = new Handler();
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,12 +79,14 @@ public class Tab1 extends Fragment {
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bt=1;
                 showIntent(context);
             }
         });
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bt=2;
                 showIntent(context);
             }
         });
@@ -116,7 +119,11 @@ public class Tab1 extends Fragment {
         }).start();
     }
     private void showIntent(Context context){
+        Bundle bundle = new Bundle();
+        // gui bt cho biet bt1 hay bt2 duoc click
+        bundle.putInt("bt",bt);
         Intent intent = new Intent(context,Answer.class);
+        intent.putExtra("btClick",bundle);
         context.startActivity(intent);
     }
     public void tab(int i){

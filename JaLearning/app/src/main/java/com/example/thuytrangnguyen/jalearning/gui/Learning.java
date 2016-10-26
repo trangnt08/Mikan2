@@ -48,14 +48,14 @@ public class Learning extends AppCompatActivity implements View.OnClickListener 
     String toSpeak = "";
     int r;
     int next=0;
-    int i;
+    int bt;
     private final Handler timeHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.answer);
+
         dbHelper = new DatabaseHelper(this);
         File database = getApplicationContext().getDatabasePath(dbHelper.DB_NAME);
         if (false == database.exists()) {

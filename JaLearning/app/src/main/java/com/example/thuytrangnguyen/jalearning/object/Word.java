@@ -7,8 +7,8 @@ public class Word {
     int id;
     String word;
     String mean;
-    private int status;
-    private int check;
+    int status;
+    int check;
 
     public Word(){
 

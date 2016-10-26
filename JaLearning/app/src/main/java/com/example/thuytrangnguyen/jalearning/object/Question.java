@@ -10,7 +10,8 @@ public class Question extends Word {
 
     public Question(){}
 
-    public Question(String w, String m, String a1, String a2, String a3){
+    public Question(int id, String w, String m, String a1, String a2, String a3){
+        this.id = id;
         this.word = w;
         this.mean = m;
         this.ans1 = a1;

@@ -17,7 +17,7 @@
         <activity
             android:name=".gui.SplishActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,21 +29,21 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-        <activity
-            android:name=".gui.Answer">
+        <activity android:name=".gui.Answer" >
         </activity>
         <activity
             android:name=".gui.Learning"
-            android:theme="@style/AppTheme.PopupOverlay"
-            >
+            android:theme="@style/AppTheme.PopupOverlay" >
         </activity>
         <activity
             android:name=".gui.StopLearnActivity"
-            android:label="Kết quả Test"
-            >
+            android:label="Kết quả Test" >
         </activity>
-        <activity android:name=".gui.CheckList"
-            android:label="単語 List">
+        <activity
+            android:name=".gui.CheckList"
+            android:label="単語 List" >
+        </activity>
+        <activity android:name=".gui.LearnActivity" >
         </activity>
     </application>
 

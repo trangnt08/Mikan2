@@ -21,7 +21,7 @@ public class Tab2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.tab2, container, false);
+        View view = inflater.inflate(R.layout.complete_screen, container, false);
         ListView lvCategory = (ListView)view.findViewById(R.id.lvCategory);
         return view;
     }

@@ -38,7 +38,7 @@ public class CheckList extends AppCompatActivity{
     public void connectView(){
         ListView lv = (ListView)findViewById(R.id.list_note);
         arrList = new ArrayList<Word>();
-        wordList = db.getListWord("n2");
+        wordList = db.getListWord2(DatabaseHelper.N2,"n2");
         int i=0;
         for(i=0;i<wordList.size();i++){
             Word word = wordList.get(i);

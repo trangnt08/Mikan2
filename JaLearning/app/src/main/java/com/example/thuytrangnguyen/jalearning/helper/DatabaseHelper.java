@@ -11,6 +11,9 @@ import android.util.Log;
 import com.example.thuytrangnguyen.jalearning.object.Question;
 import com.example.thuytrangnguyen.jalearning.object.Word;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +24,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_PATH = "/data/data/com.example.thuytrangnguyen.jalearning/databases/";
     public static final String DB_NAME = "japan.sqlite";
     public static final String TABLE_BASIC = "Words";
+    public static final String N1 = "N1";
     public static final String N2 = "N2";
+    public static final String N3 = "N3";
+    public static final String N4 = "N4";
+    public static final String N5 = "N5";
+
+    public static final String CN2 = "CN2";
+    public static final String CN3 = "CN3";
     public static final String ID_WORD = "id";
+    public static final String LEVEL = "level";
+    public static final String STATUS = "status";
+    public static final String CHECK = "checked";
+    public static final String CREATE_TABLE_N1 = "CREATE TABLE " + N1+ "(" + ID_WORD + " INTEGER PRIMARY KEY NOT NULL" + ", " + STATUS + " INTEGER " + "," + CHECK + " INTEGER )";
+    public static final String CREATE_TABLE_N2 = "CREATE TABLE " + N2+ "(" + ID_WORD + " INTEGER PRIMARY KEY NOT NULL" + ", " + STATUS + " INTEGER " + "," + CHECK + " INTEGER )";
+    public static final String CREATE_TABLE_N3 = "CREATE TABLE " + N3+ "(" + ID_WORD + " INTEGER PRIMARY KEY NOT NULL" + ", " + STATUS + " INTEGER " + "," + CHECK + " INTEGER )";
+    public static final String CREATE_TABLE_N4 = "CREATE TABLE " + N4+ "(" + ID_WORD + " INTEGER PRIMARY KEY NOT NULL" + ", " + STATUS + " INTEGER " + "," + CHECK + " INTEGER )";
+    public static final String CREATE_TABLE_N5 = "CREATE TABLE " + N5+ "(" + ID_WORD + " INTEGER PRIMARY KEY NOT NULL" + ", " + STATUS + " INTEGER " + "," + CHECK + " INTEGER )";
+    public static final String DB_TO_N2 = "INSERT INTO "+N2+" ("+ID_WORD+") SELECT id FROM "+TABLE_BASIC + " WHERE "+LEVEL+"='"+N2+"'";
+
     public static final String KEY_ID_RANK = "id_rank";
     public static final String WORD = "word";
     public static final String MEAN = "mean";
-    public static final String STATUS = "status";
-    public static final String CHECK = "check";
+
     public static final String A = "a";
     public static final String B = "b";
     public static final String C = "c";
+
+
 
     private Context context;
     private SQLiteDatabase db;
@@ -41,13 +62,69 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        try {
+            db.execSQL(CREATE_TABLE_N1);
+            db.execSQL(getSqlDB(N1));
+            db.execSQL(CREATE_TABLE_N2);
+            db.execSQL(getSqlDB(N2));
+            db.execSQL(CREATE_TABLE_N3);
+            db.execSQL(CREATE_TABLE_N4);
+            db.execSQL(CREATE_TABLE_N5);
+            db.execSQL(getSqlDB(N3));
+            db.execSQL(getSqlDB(N4));
+            db.execSQL(getSqlDB(N5));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        String query1 = "DROP TABLE IF EXISTS "+N1;
+        db.execSQL(query1);
+        String query2 = "DROP TABLE IF EXISTS "+N2;
+        db.execSQL(query2);
+        String query3 = "DROP TABLE IF EXISTS " + N3;
+        db.execSQL(query3);
+        String query4 = "DROP TABLE IF EXISTS " + N4;
+        db.execSQL(query4);
+        String query5 = "DROP TABLE IF EXISTS " + N5;
+        db.execSQL(query5);
+        this.onCreate(db);
     }
+
+    public String getSqlDB(String n){
+        return "INSERT INTO "+n+" ("+ID_WORD+") SELECT id FROM "+TABLE_BASIC + " WHERE "+LEVEL+"='n2'";
+    }
+
+    private boolean copyDataBase(Context context) {
+
+        try {
+            //Open your local db as the input stream
+            InputStream myInput = context.getAssets().open(DB_NAME);
+
+            // Path to the just created empty db
+            String outFileName = DB_PATH + DB_NAME;
+
+            //Open the empty db as the output stream
+            OutputStream myOutput = new FileOutputStream(outFileName);
+
+            //transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length = 0;
+            while ((length = myInput.read(buffer)) > 0) {
+                myOutput.write(buffer, 0, length);
+            }
+            //Close the streams
+            myOutput.flush();
+            myOutput.close();
+            myInput.close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 //    public void openDataBase() {
 //
 //        //Open the database
@@ -59,11 +136,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        db = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
 //
 //    }
-    public void closeDatabase(){
-        if (db!=null){
-            db.close();
-        }
-    }
+//    public void closeDatabase(){
+//        if (db!=null){
+//            db.close();
+//        }
+//    }
 
     public void open() {
         try {
@@ -90,6 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Word word = null;
         List<Word> wordsList = new ArrayList<>();
         open();
+        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
         Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
@@ -98,7 +176,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        closeDatabase();
+        close();
+        return wordsList;
+    }
+    public List<Word> getListWord2(String n,String l){
+        Word word = null;
+        List<Word> wordsList = new ArrayList<>();
+        open();
+        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
+        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+N2+"."+ID_WORD ,null);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC+","+n + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+n+"."+ID_WORD ,null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            word = new Word(cursor.getInt(0),cursor.getString(cursor.getColumnIndex("word")),cursor.getString(cursor.getColumnIndex("mean")),cursor.getInt(cursor.getColumnIndex("status")),cursor.getInt(cursor.getColumnIndex("checked")));
+            wordsList.add(word);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        close();
+        return wordsList;
+    }
+
+    public List<Word> getn2(){
+        Word word = null;
+        List<Word> wordsList = new ArrayList<>();
+        open();
+        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
+        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+N2+"."+ID_WORD ,null);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM N2",null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            word = new Word();
+            word.setId(cursor.getInt(0));
+            word.setStatus(cursor.getInt(1));
+            word.setCheck(cursor.getInt(2));
+            Log.d("id" + word.getId(), "status" + word.getStatus());
+            wordsList.add(word);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        close();
         return wordsList;
     }
     public Cursor getAll(String sql) {
@@ -123,8 +242,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Word cursorToWord(Cursor cursor) {
         Word word = new Word();
         word.setId(cursor.getInt(cursor.getColumnIndex(ID_WORD)));
-        //word.setWord(cursor.getString(cursor.getColumnIndex(WORD)));
-        //word.setMean(cursor.getString(cursor.getColumnIndex(MEAN)));
         word.setStatus(cursor.getInt(cursor.getColumnIndex(STATUS)));
         word.setCheck(0);
         return word;
@@ -136,19 +253,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Question> questionList = new ArrayList<>();
         int i = 0;
         while (i<wordsList.size()){
-            if (i == wordsList.size()-3)
-            question = new Question(wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+1).getMean(),wordsList.get(i+2).getMean(),wordsList.get(0).getMean());
+            if (i == wordsList.size()-4)
+            question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean(),wordsList.get(0).getMean());
+            else if (i==wordsList.size()-3)
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean());
             else if (i==wordsList.size()-2)
-                question = new Question(wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+1).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean());
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean(),wordsList.get(2).getMean());
             else if (i==wordsList.size()-1)
-                question = new Question(wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean(),wordsList.get(2).getMean());
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(1).getMean(),wordsList.get(2).getMean(),wordsList.get(3).getMean());
             else
-                question = new Question(wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+1).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean());
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean(),wordsList.get(i+4).getMean());
 
             questionList.add(question);
             i++;
         }
-        closeDatabase();
+        close();
         return questionList;
     }
 
@@ -204,12 +323,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return id of note update
      */
     public boolean updateWord(Word word, String n) {
-        open();
-        ContentValues w = wordToValues(word);
-        db.execSQL("UPDATE " + n +" SET status = "+word.getStatus()+", check=" + word.getCheck()+" WHERE id = "+word.getId()+";");
-        //return update(n, w, ID_WORD + " = " + word.getId());
-        close();
-        return true;
+        return update(n, wordToValues(word), ID_WORD + " = " + word.getId());
     }
 
     /**
@@ -221,11 +335,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private ContentValues wordToValues(Word word) {
-        Log.d("wordddd status ",""+word.getStatus());
         ContentValues values = new ContentValues();
-        //values.put(ID_WORD, word.getId());
-        values.put(STATUS, word.getStatus());
-        values.put(CHECK, 1);
+        values.put(STATUS, +word.getStatus());
+        values.put(CHECK, +word.getCheck());
         return values;
     }
 }

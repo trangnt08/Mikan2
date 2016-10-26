@@ -33,11 +33,18 @@ public class ItemCheckList extends ArrayAdapter<Word>{
         if (arrayList.size()>0&&position>=0){
             TextView tvWord = (TextView)convertView.findViewById(R.id.tvWord);
             TextView tvMean = (TextView)convertView.findViewById(R.id.tvMean);
+            TextView tvStatus = (TextView)convertView.findViewById(R.id.tvStatus);
             CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.checkbox);
             Word word = arrayList.get(position);
             tvWord.setText(word.getWord().toString());
             tvMean.setText(word.getMean().toString());
-            if (word.getStatus()==0)
+            if(word.getStatus()==1) tvStatus.setText("Excellent");
+            else if(word.getStatus()==2) tvStatus.setText("Great");
+            else if(word.getStatus()==3) tvStatus.setText("Good");
+            else if(word.getStatus()==5) tvStatus.setText("Bad");
+            else tvStatus.setText("");
+
+            if(word.getCheck()==1)
                 checkBox.setChecked(true);
             else checkBox.setChecked(false);
         }
