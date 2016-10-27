@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.thuytrangnguyen.jalearning.object.Question;
 import com.example.thuytrangnguyen.jalearning.object.Word;
@@ -179,13 +178,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         close();
         return wordsList;
     }
-    public List<Word> getListWord2(String n,String l){
+    public List<Word> getListWord2(String n){
         Word word = null;
         List<Word> wordsList = new ArrayList<>();
         open();
-        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
-        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+N2+"."+ID_WORD ,null);
-
         Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC+","+n + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+n+"."+ID_WORD ,null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
@@ -198,21 +194,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return wordsList;
     }
 
-    public List<Word> getn2(){
+
+    public List<Word> getWordRank(String sql){
         Word word = null;
         List<Word> wordsList = new ArrayList<>();
         open();
-        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE level = '" + n + "'",null);
-        //Cursor cursor = db.rawQuery("SELECT * FROM "+ TABLE_BASIC + " WHERE "+TABLE_BASIC+"."+ID_WORD+"="+N2+"."+ID_WORD ,null);
 
-        Cursor cursor = db.rawQuery("SELECT * FROM N2",null);
+        Cursor cursor = db.rawQuery(sql,null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
-            word = new Word();
-            word.setId(cursor.getInt(0));
-            word.setStatus(cursor.getInt(1));
-            word.setCheck(cursor.getInt(2));
-            Log.d("id" + word.getId(), "status" + word.getStatus());
+            word = new Word(cursor.getInt(0),cursor.getString(1),cursor.getString(2),0,0);
             wordsList.add(word);
             cursor.moveToNext();
         }
@@ -255,6 +246,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while (i<wordsList.size()){
             if (i == wordsList.size()-4)
             question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean(),wordsList.get(0).getMean());
+            else if (i==wordsList.size()-3)
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean());
+            else if (i==wordsList.size()-2)
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean(),wordsList.get(2).getMean());
+            else if (i==wordsList.size()-1)
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(1).getMean(),wordsList.get(2).getMean(),wordsList.get(3).getMean());
+            else
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean(),wordsList.get(i+4).getMean());
+
+            questionList.add(question);
+            i++;
+        }
+        close();
+        return questionList;
+    }
+
+    public List<Question> getQuestionsRank(String sql){
+        Question question = null;
+        open();
+        List<Word> wordsList = getWordRank(sql);
+        List<Question> questionList = new ArrayList<>();
+        int i = 0;
+        while (i<wordsList.size()){
+            if (i == wordsList.size()-4)
+                question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(i+3).getMean(),wordsList.get(0).getMean());
             else if (i==wordsList.size()-3)
                 question = new Question(wordsList.get(i).getId(),wordsList.get(i).getWord(),wordsList.get(i).getMean(),wordsList.get(i+2).getMean(),wordsList.get(0).getMean(),wordsList.get(1).getMean());
             else if (i==wordsList.size()-2)

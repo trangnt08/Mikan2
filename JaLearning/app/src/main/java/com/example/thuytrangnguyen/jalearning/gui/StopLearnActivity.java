@@ -41,7 +41,7 @@ public class StopLearnActivity extends AppCompatActivity implements View.OnClick
     public void connectView(){
         lv = (ListView)findViewById(R.id.lvComplete);
         arrList = new ArrayList<Word>();
-        wordList = db.getListWord2(DatabaseHelper.N2,"n2");
+        wordList = db.getListWord2(DatabaseHelper.N2);
         int i=0;
         for(i=0;i<wordList.size();i++){
             Word word = wordList.get(i);

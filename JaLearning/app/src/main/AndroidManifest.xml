@@ -43,8 +43,6 @@
             android:name=".gui.CheckList"
             android:label="単語 List" >
         </activity>
-        <activity android:name=".gui.LearnActivity" >
-        </activity>
     </application>
 
 </manifest>

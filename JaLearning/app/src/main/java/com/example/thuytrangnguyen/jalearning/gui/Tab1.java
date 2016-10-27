@@ -48,18 +48,19 @@ public class Tab1 extends Fragment {
         ImageButton imageButton2 = (ImageButton)view.findViewById(R.id.ib2);
         Button bt1 = (Button)view.findViewById(R.id.btMinus1);
         Button bt2 = (Button)view.findViewById(R.id.btPrepare1);
+        Button bt3 = (Button)view.findViewById(R.id.bt3);
         tvRank = (TextView)view.findViewById(R.id.tvRank);
         tvRankonRank = (TextView)view.findViewById(R.id.tvRankonRank);
         a= 20;
         tvPro.setText(a+"%");
-        setCircleProgress(20,60);
+        setCircleProgress(20, 60);
 
 
         imageButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(i>1)
-                tab(--i);
+                if (i > 1)
+                    tab(--i);
             }
         });
         imageButton2.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +91,13 @@ public class Tab1 extends Fragment {
                 showIntent(context);
             }
         });
-
+        bt3.setOnClickListener(new View.OnClickListener() {
+             @Override
+            public void onClick(View v) {
+            bt=3;
+                 showIntent(context);
+            }
+        });
         return view;
     }
 

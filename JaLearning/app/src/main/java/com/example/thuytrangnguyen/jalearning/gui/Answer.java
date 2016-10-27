@@ -37,8 +37,9 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     TextToSpeech t1;
     Context context;
     ImageButton ibLoa;
-    private List<Word> wordList;
-    List<Question> questionsList;
+    private List<Word> wordList, wordList1,wordList2;
+    List<Question> questionsList = new ArrayList<>();
+    List<Question> questionsList1;
     List<Question> ques10 = new ArrayList<>();
     private DatabaseHelper dbHelper;
     TextView tvA, tvB, tvC, tvD;
@@ -57,6 +58,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     int d;
     int t=0;
     int bt;
+    int level=2;
     private final Handler timeHandler = new Handler();
 
     @Override
@@ -81,22 +83,42 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("btClick");
         bt = bundle.getInt("bt");
-        Log.d("bt",""+bt);
+        if((bundle=intent.getBundleExtra("getLevel"))!=null){
+            level = bundle.getInt("level");
+        };
 
-        questionsList = dbHelper.getQuestions("n2");
+        questionsList1 = dbHelper.getQuestions("n"+level);
+        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level = 'n2' AND status = 5 LIMIT 10";
+        String s2 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level ='n2' AND status NOT IN(1,2,3,5) LIMIT 10";
+//        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC + " WHERE level = 'n2' LIMIT 0, 10";
 
-        for(int j=0;j<questionsList.size();j++){
+
+        for(int j=0;j<questionsList1.size();j++){
             Word w = new Word();
-            w.setId(questionsList.get(j).getId());
-            w.setWord(questionsList.get(j).getWord());
-            w.setMean(questionsList.get(j).getMean());
+            w.setId(questionsList1.get(j).getId());
+            w.setWord(questionsList1.get(j).getWord());
+            w.setMean(questionsList1.get(j).getMean());
             w.setStatus(0);
             w.setCheck(0);
             dbHelper.insertWord(w, dbHelper.N2);
         }
-        wordList = dbHelper.getListWord("n2");
-        Log.d("Size", "" + questionsList.size());
-
+        //wordList = dbHelper.getListWord("n"+level);
+        wordList = dbHelper.getListWord2("N"+level);
+        if(bt==1){
+            for(int j=0;j<wordList.size();j++){
+                if(wordList.get(j).getStatus()==5){
+                    questionsList.add(questionsList1.get(j));
+                }
+            }
+        }
+        else if(bt==2){
+            for(int j=0;j<wordList.size();j++){
+                if(wordList.get(j).getStatus()==0){
+                    questionsList.add(questionsList1.get(j));
+                }
+            }
+        }
+        else if(bt==3) questionsList = dbHelper.getQuestions("n"+level);
         connectView();
         toNextQuestion();
         learn();
@@ -117,7 +139,6 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         tickB = (TextView) findViewById(R.id.textView_tickB);
         tickC = (TextView) findViewById(R.id.textView_tickC);
         tickD = (TextView) findViewById(R.id.textView_tickD);
-        Log.d("a", "" + dbHelper.CREATE_TABLE_N2);
     }
     private boolean copyDataBase(Context context) {
 
@@ -323,7 +344,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             numberquestion++;
             chooseanswer="";
             updateScreen(next);
-            ques10.add(questionsList.get(next));
+//            ques10.add(questionsList.get(next));
             Log.d("size  = " + questionsList.size(), "i = " + next);
             next++;
         }else{
@@ -460,5 +481,12 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         dialog.setTitle("   Ban co muon thoat khong");
 
         return dialog;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // code here to show dialog
+        countDownTimer.cancel();
+        super.onBackPressed();  // optional depending on your needs
     }
 }
