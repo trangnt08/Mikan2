@@ -26,19 +26,24 @@ public class CheckList extends AppCompatActivity{
     private List<Word> wordList;
     ItemCheckList adapter;
     DatabaseHelper db;
+    int level=5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list_note);
 
+//        Intent intent = getIntent();
+//        Bundle bundle = intent.getBundleExtra("toStop");
+//        level = bundle.getInt("level");
         db = new DatabaseHelper(this);
         connectView();
+
     }
     public void connectView(){
         ListView lv = (ListView)findViewById(R.id.list_note);
         arrList = new ArrayList<Word>();
-        wordList = db.getListWord2(DatabaseHelper.N2);
+        wordList = db.getListWord2(DatabaseHelper.TABLE_BASIC,"N"+level);
         int i=0;
         for(i=0;i<wordList.size();i++){
             Word word = wordList.get(i);

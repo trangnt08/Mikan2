@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,8 @@ public class Tab1 extends Fragment {
     TextView tvRank, tvRankonRank;
     int mProgressStatus=0;
     int mProgressStatus2=0;
-    int bt;
+    int bt,level=5;
+    Bundle b;
     private Handler mHandler = new Handler();
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,12 @@ public class Tab1 extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.tab1, container, false);
         context = getActivity();
+        b = this.getArguments();
+        Intent intent = new Intent();
+        if(b!=null){
+            level = b.getInt("level");
+        };
+        Log.d("level",""+level);
 
         mProgressBar = (MProgressBar)view.findViewById(R.id.mprocess);
         tvPro = (TextView)view.findViewById(R.id.txt_secondsleft);
@@ -129,6 +137,7 @@ public class Tab1 extends Fragment {
         Bundle bundle = new Bundle();
         // gui bt cho biet bt1 hay bt2 duoc click
         bundle.putInt("bt",bt);
+        bundle.putInt("level",level);
         Intent intent = new Intent(context,Answer.class);
         intent.putExtra("btClick",bundle);
         context.startActivity(intent);

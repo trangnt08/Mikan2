@@ -35,7 +35,11 @@ public class ItemCategory extends ArrayAdapter<Catego>{
             TextView tvNumberOfN = (TextView) convertView.findViewById(R.id.tvNumberOfN);
             ImageView imChar = (ImageView) convertView.findViewById(R.id.imChar);
             Catego catego = arrayList.get(position);
-            tvN.setText("N"+catego.getN());
+            if(catego.getN()>0&&(catego.getN()<6)){
+            tvN.setText("N"+catego.getN());}
+            else if(catego.getN()==0){
+                tvN.setText("IT Nihongo");
+            }
             tvNumberOfN.setText(""+catego.getNumber());
         }
         return convertView;

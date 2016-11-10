@@ -1,8 +1,9 @@
 package com.example.thuytrangnguyen.jalearning.gui;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class Category extends Fragment{
             Catego catego = new Catego(i,100);
             arrayList.add(catego);
         }
+        arrayList.add(new Catego(0,100));
         adapter = new ItemCategory(getActivity(),R.layout.custom_level_category,arrayList);
         lvCategory.setAdapter(adapter);
         lvCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -47,15 +49,26 @@ public class Category extends Fragment{
                 level = arrayList.get(position).getN();
                 Bundle bundle = new Bundle();
                 // gui bt cho biet bt1 hay bt2 duoc click
-                bundle.putInt("level",level);
-                Intent intent = new Intent(context,Answer.class);
-                intent.putExtra("getLevel",bundle);
-                context.startActivity(intent);
+                bundle.putInt("level", level);
+                Fragment f1 = new Tab1();
+                f1.setArguments(bundle);
+                getFragment(f1);
+//                Intent intent = new Intent(getActivity(),Answer.class);
+//                intent.putExtra("getLevel",bundle);
+//                startActivity(intent);
             }
         });
         return view;
     }
 
+    public void getFragment(Fragment fi){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        Fragment f2=new Tab2();
+        fragmentTransaction.replace(R.id.layout1, fi);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
     public void onResume(){
         super.onResume();
 

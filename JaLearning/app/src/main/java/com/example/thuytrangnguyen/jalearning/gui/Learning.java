@@ -68,7 +68,7 @@ public class Learning extends AppCompatActivity implements View.OnClickListener 
             }
         }
         //wordList = dbHelper.getListWord("n2");
-        questionsList = dbHelper.getQuestions("n2");
+        questionsList = dbHelper.getQuestions(DatabaseHelper.TABLE_BASIC,"n2");
         Log.d("Size", "" + questionsList.size());
 
         connectView();

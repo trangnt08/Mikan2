@@ -4,18 +4,21 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.thuytrangnguyen.jalearning.R;
+import com.example.thuytrangnguyen.jalearning.helper.DatabaseHelper;
 import com.example.thuytrangnguyen.jalearning.object.Word;
 
 import java.util.ArrayList;
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Word> arrList;
     CheckList adapter;
     Context context;
+    int level=5;
+    String table= DatabaseHelper.N5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +39,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Intent intent = getIntent();
+        Bundle bundle;
+        if((bundle= intent.getBundleExtra("back"))!=null) {
+            level = bundle.getInt("level");
+            table = bundle.getString("table");
+        }
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment f1=new Tab1();
+        f1.setArguments(bundle);
         fragmentTransaction.add(R.id.layout1, f1);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -84,7 +97,21 @@ public class MainActivity extends AppCompatActivity
 //            if(getFragmentManager().getBackStackEntryCount() > 1)
 //                getFragmentManager().popBackStack();
 //            else
-                super.onBackPressed();
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Closing Activity")
+                    .setMessage("Are you sure you want to close this activity?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            MainActivity.this.finish();
+                            System.exit(0);
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
     }
 

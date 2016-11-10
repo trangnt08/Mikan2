@@ -58,7 +58,9 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     int d;
     int t=0;
     int bt;
-    int level=2;
+    int level=5;
+    String table="";
+    ArrayList<Integer> listComplete = new ArrayList<>();
     private final Handler timeHandler = new Handler();
 
     @Override
@@ -81,17 +83,27 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         }
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getBundleExtra("btClick");
-        bt = bundle.getInt("bt");
-        if((bundle=intent.getBundleExtra("getLevel"))!=null){
+        Bundle bundle;
+        if((bundle= intent.getBundleExtra("btClick"))!=null) {
+            bt = bundle.getInt("bt");
             level = bundle.getInt("level");
-        };
+            table = bundle.getString("table");
+        }
 
-        questionsList1 = dbHelper.getQuestions("n"+level);
-        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level = 'n2' AND status = 5 LIMIT 10";
-        String s2 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level ='n2' AND status NOT IN(1,2,3,5) LIMIT 10";
+        if(level>0&&level<6) {
+            table = DatabaseHelper.TABLE_BASIC;
+        }
+        else if(level==0) {
+            table = DatabaseHelper.TABLE_IT;
+        }
+//        if((bundle=intent.getBundleExtra("getLevel"))!=null){
+//
+//        };
+
+        questionsList1 = dbHelper.getQuestions(table,"n"+level);
+//        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level = 'n2' AND status = 5 LIMIT 10";
+//        String s2 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level ='n2' AND status NOT IN(1,2,3,5) LIMIT 10";
 //        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC + " WHERE level = 'n2' LIMIT 0, 10";
-
 
         for(int j=0;j<questionsList1.size();j++){
             Word w = new Word();
@@ -100,10 +112,12 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             w.setMean(questionsList1.get(j).getMean());
             w.setStatus(0);
             w.setCheck(0);
-            dbHelper.insertWord(w, dbHelper.N2);
+            //dbHelper.insertWord(w, "N"+level);
         }
         //wordList = dbHelper.getListWord("n"+level);
-        wordList = dbHelper.getListWord2("N"+level);
+
+            wordList = dbHelper.getListWord2(table, "N" + level);
+
         if(bt==1){
             for(int j=0;j<wordList.size();j++){
                 if(wordList.get(j).getStatus()==5){
@@ -118,7 +132,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
                 }
             }
         }
-        else if(bt==3) questionsList = dbHelper.getQuestions("n"+level);
+        else if(bt==3) questionsList = dbHelper.getQuestions(table,"n"+level);
         connectView();
         toNextQuestion();
         learn();
@@ -274,8 +288,12 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             public void run() {
                 Bundle bundle = new Bundle();
                // bundle.putCharSequenceArrayList("number10",ques10);
-
+                bundle.putInt("level", level);
+                bundle.putInt("bt", bt);
+                bundle.putString("table", table);
                 Intent intentStopPlay = new Intent(Answer.this, StopLearnActivity.class);
+                intentStopPlay.putIntegerArrayListExtra("listComplete", listComplete);
+                intentStopPlay.putExtra("toStop", bundle);
                 startActivity(intentStopPlay);
             }
         }, 100);
@@ -329,7 +347,8 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         curentWord.setWord(q.getWord());
         curentWord.setMean(q.getMean());
         curentWord.setStatus(5);
-        dbHelper.updateWord(curentWord,"N2");
+        dbHelper.updateWord(curentWord, "N" + level);
+        listComplete.add(q.getId());
         tvNumberQues.setText(numberquestion + "/10");
         tvDemlui.setText("5");
         showAnswers(q,r);
@@ -366,6 +385,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     public void showAnswers(Question question, int ran) {
         tvQues.setText(question.getWord().toString());
         toSpeak = tvQues.getText().toString();
+        Log.d("bbbb", "" + question.getMean());
 
         t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -427,14 +447,14 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             else word.setStatus(3);
 
             n = "N2";
-            dbHelper.updateWord(word,"N2");
+            dbHelper.updateWord(word,"N"+level);
         }else{
             word.setCheck(0);
             word.setStatus(5);
             setCurrentScreen(backgroundanswer,tick,false);
             Log.d("status ", "" + word.getStatus());
             Log.d("check ", "" + word.getCheck());
-            dbHelper.updateWord(word, "N2");
+            dbHelper.updateWord(word, "N"+level);
             //countDownTimer.cancel();
 //            toNextQuestion();
         }
@@ -487,6 +507,6 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     public void onBackPressed() {
         // code here to show dialog
         countDownTimer.cancel();
-        super.onBackPressed();  // optional depending on your needs
+        super.onBackPressed();
     }
 }
