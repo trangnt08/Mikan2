@@ -43,6 +43,14 @@
             android:name=".gui.CheckList"
             android:label="単語 List" >
         </activity>
+        <activity
+            android:name=".gui.SettingActivity"
+            android:label="Setting" >
+        </activity>
+        <activity
+            android:name=".flashcard.SwipeDeckActivity"
+            android:label="FlashCard" >
+        </activity>
     </application>
 
 </manifest>

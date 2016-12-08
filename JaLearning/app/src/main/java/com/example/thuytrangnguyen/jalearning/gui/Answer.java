@@ -3,6 +3,7 @@ package com.example.thuytrangnguyen.jalearning.gui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -37,6 +38,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     TextToSpeech t1;
     Context context;
     ImageButton ibLoa;
+    String prefname = "mydata";
     private List<Word> wordList, wordList1,wordList2;
     List<Question> questionsList = new ArrayList<>();
     List<Question> questionsList1;
@@ -58,7 +60,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     int d;
     int t=0;
     int bt;
-    int level=5;
+    int level=5, status_choice=0;
     String table="";
     ArrayList<Integer> listComplete = new ArrayList<>();
     private final Handler timeHandler = new Handler();
@@ -81,12 +83,13 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
                 return;
             }
         }
+        restoringPreferences();
 
         Intent intent = getIntent();
         Bundle bundle;
         if((bundle= intent.getBundleExtra("btClick"))!=null) {
             bt = bundle.getInt("bt");
-            level = bundle.getInt("level");
+//            level = bundle.getInt("level");
             table = bundle.getString("table");
         }
 
@@ -101,19 +104,16 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
 //        };
 
         questionsList1 = dbHelper.getQuestions(table,"n"+level);
-//        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level = 'n2' AND status = 5 LIMIT 10";
-//        String s2 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC+","+DatabaseHelper.N2+" WHERE level ='n2' AND status NOT IN(1,2,3,5) LIMIT 10";
-//        String s1 = "SELECT * FROM "+DatabaseHelper.TABLE_BASIC + " WHERE level = 'n2' LIMIT 0, 10";
 
-        for(int j=0;j<questionsList1.size();j++){
-            Word w = new Word();
-            w.setId(questionsList1.get(j).getId());
-            w.setWord(questionsList1.get(j).getWord());
-            w.setMean(questionsList1.get(j).getMean());
-            w.setStatus(0);
-            w.setCheck(0);
-            //dbHelper.insertWord(w, "N"+level);
-        }
+//        for(int j=0;j<questionsList1.size();j++){
+//            Word w = new Word();
+//            w.setId(questionsList1.get(j).getId());
+//            w.setWord(questionsList1.get(j).getWord());
+//            w.setMean(questionsList1.get(j).getMean());
+//            w.setStatus(0);
+//            w.setCheck(0);
+//            //dbHelper.insertWord(w, "N"+level);
+//        }
         //wordList = dbHelper.getListWord("n"+level);
 
             wordList = dbHelper.getListWord2(table, "N" + level);
@@ -231,6 +231,14 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    public void restoringPreferences()
+        {
+        SharedPreferences pre=getSharedPreferences
+                (prefname, MODE_PRIVATE);
+        //lấy giá trị checked ra, nếu không thấy thì giá trị mặc định là false
+        level = pre.getInt("level",5);
+            status_choice = pre.getInt("status_choice",0);
+    }
     public void aEvent(){
         setStatusOnClickABCD(false);
         chooseanswer="A";

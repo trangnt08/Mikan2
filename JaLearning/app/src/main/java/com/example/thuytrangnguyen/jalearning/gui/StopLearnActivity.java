@@ -90,5 +90,6 @@ public class StopLearnActivity extends AppCompatActivity implements View.OnClick
         Intent intent = new Intent(StopLearnActivity.this,MainActivity.class);
         intent.putExtra("back", bundle);
         startActivity(intent);
+        finish();
     }
 }

@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.thuytrangnguyen.jalearning.R;
+import com.example.thuytrangnguyen.jalearning.fragment.Category;
+import com.example.thuytrangnguyen.jalearning.fragment.Tab1;
 import com.example.thuytrangnguyen.jalearning.helper.DatabaseHelper;
 import com.example.thuytrangnguyen.jalearning.object.Word;
 
@@ -105,7 +107,9 @@ public class MainActivity extends AppCompatActivity
                     {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            MainActivity.this.finish();
+//                            MainActivity.this.finish();
+                            finish();
+                            android.os.Process.killProcess(android.os.Process.myPid());
                             System.exit(0);
                         }
 
@@ -134,6 +138,7 @@ public class MainActivity extends AppCompatActivity
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            getSetting();
             return true;
         }
 
@@ -172,6 +177,17 @@ public class MainActivity extends AppCompatActivity
 
     public void showNote(Context context){
         Intent i = new Intent(context,CheckList.class);
+        context.startActivity(i);
+    }
+    public void getSetting(){
+//        Dialog dialog = new Dialog(this);
+//        dialog.setContentView(R.layout.dialog_setting); //Hiện thị Dialog với layout custom_Dialog
+//        dialog.setTitle("Setting");
+//        dialog.setCancelable(true);
+//        ImageView imageView = (ImageView) dialog.findViewById(R.id.imFlashCard);
+//        imageView.setImageResource(R.drawable.flashcard_icon);
+//        dialog.show();
+        Intent i = new Intent(context,SettingActivity.class);
         context.startActivity(i);
     }
 }
