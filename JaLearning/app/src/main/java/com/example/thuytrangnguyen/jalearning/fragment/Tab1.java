@@ -141,6 +141,7 @@ public class Tab1 extends Fragment {
         }).start();
     }
     private void showIntent(Context context){
+        restoringPreferences();
         Bundle bundle = new Bundle();
         // gui bt cho biet bt1 hay bt2 duoc click
         bundle.putInt("bt",bt);

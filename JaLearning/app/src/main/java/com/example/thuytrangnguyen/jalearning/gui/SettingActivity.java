@@ -25,7 +25,16 @@ public class SettingActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setting);
         context = this;
+        restoringPreferences();
         init();
+        if(status_choice==1){
+            imFlashCard.setBackgroundResource(R.drawable.circle_setting2);
+            imQuesAns.setBackgroundResource(R.drawable.circle_setting);
+        }
+        else {
+            imQuesAns.setBackgroundResource(R.drawable.circle_setting2);
+            imFlashCard.setBackgroundResource(R.drawable.circle_setting);
+        }
     }
 
     public void init(){
@@ -36,6 +45,8 @@ public class SettingActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 restoringPreferences();
+                imFlashCard.setBackgroundResource(R.drawable.circle_setting2);
+                imQuesAns.setBackgroundResource(R.drawable.circle_setting);
                 status_choice=1;
                 savingPreferences();
             }
@@ -44,6 +55,8 @@ public class SettingActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 restoringPreferences();
+                imQuesAns.setBackgroundResource(R.drawable.circle_setting2);
+                imFlashCard.setBackgroundResource(R.drawable.circle_setting);
                 status_choice = 0;
                 savingPreferences();
             }

@@ -344,6 +344,8 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
     public void getQues10(){
 
     }
+
+    // ham hien ra cau hoi moi
     public void updateScreen(int n){
         Random ran = new Random();
         r = ran.nextInt(4);
@@ -371,8 +373,7 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             numberquestion++;
             chooseanswer="";
             updateScreen(next);
-//            ques10.add(questionsList.get(next));
-            Log.d("size  = " + questionsList.size(), "i = " + next);
+//            Log.d("size  = " + questionsList.size(), "i = " + next);
             next++;
         }else{
             stopPlaying();
@@ -460,8 +461,6 @@ public class Answer extends AppCompatActivity implements View.OnClickListener {
             word.setCheck(0);
             word.setStatus(5);
             setCurrentScreen(backgroundanswer,tick,false);
-            Log.d("status ", "" + word.getStatus());
-            Log.d("check ", "" + word.getCheck());
             dbHelper.updateWord(word, "N"+level);
             //countDownTimer.cancel();
 //            toNextQuestion();
